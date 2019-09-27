@@ -61,6 +61,12 @@
 			"cfenv": "cpp",
 			"cinttypes": "cpp",
 			"typeinfo": "cpp"
-		}
+		},
+		"doxdocgen.c.getterText": "Get the {name}",
+		"doxdocgen.c.setterText": "Set the {name}",
+		"doxdocgen.cpp.ctorText": "Construct a new {name}",
+		"doxdocgen.cpp.dtorText": "Destroy the {name}",
+		"doxdocgen.generic.authorEmail": "thomas.lemetayer.35@gmail.com",
+		"doxdocgen.generic.authorName": "Thomas LEMETAYER"
 	}
 }

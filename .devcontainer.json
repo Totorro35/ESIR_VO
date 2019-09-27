@@ -4,7 +4,8 @@
 	"dockerFile": "Dockerfile",
 	"runArgs": [
 		"-e","DISPLAY=${env:DISPLAY}",
-		"-v","/tmp/.X11-unix:/tmp/.X11-unix"
+		"-v","/tmp/.X11-unix:/tmp/.X11-unix",
+		"-p","8000:8000"
 	],
-	"extensions": []
+	"extensions": [],
 }

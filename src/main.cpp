@@ -8,16 +8,8 @@
  * @copyright Copyright (c) 2019
  * 
  */
-#include <iostream>
 
-/**
- * @brief Test for Doxygen 
- * 
- * @param a 
- * @return int 
- */
-int testDoxygen(double a){
-}
+#include <IO/Visualizer.hpp>
 
 /**
  * @brief Main Function
@@ -27,6 +19,6 @@ int testDoxygen(double a){
  * @return int 
  */
 int main(int argc,char** argv){
-    std::cout<<"Hello World!"<<std::endl;
+    IO::MainVisu();
     return 0;
 }
