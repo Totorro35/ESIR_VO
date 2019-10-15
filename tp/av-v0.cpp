@@ -89,7 +89,14 @@ void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb, vpColVec
     }
 }
 
-// Calcul de la matrice d'interaction d'un point 2D
+/**
+ * @brief Calcul de la matrice d'interaction d'un point 2D
+ * 
+ * @param cX 
+ * @param x 
+ * @param y 
+ * @param Lx 
+ */
 void computeInteractionMatrix(vpColVector &cX, double x, double y, vpMatrix &Lx)
 {
     double invZ = 1 / cX[2];
@@ -109,6 +116,11 @@ void computeInteractionMatrix(vpColVector &cX, double x, double y, vpMatrix &Lx)
     Lx[1][5]=-x;
 }
 
+/**
+ * @brief Executable for 3.2
+ *  Asservissement visuel sur 1 point 2D
+ * 
+ */
 void tp2DVisualServoingOnePoint()
 {
 
