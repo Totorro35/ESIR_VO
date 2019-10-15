@@ -1,10 +1,7 @@
 /**
  * @file av-v0.cpp
  * @author Thomas LEMETAYER (thomas.lemetayer.35@gmail.com)
-<<<<<<< HEAD
  * @author Corentin SALAUN (corentin.salaun@gmail.com)
-=======
->>>>>>> 9ae6375825155603e2aedd23f65fff2d5820b718
  * @brief 
  * @version 0.1
  * @date 2019-10-15
@@ -74,11 +71,11 @@ void project(vpColVector &X, vpColVector &x)
  * 
  * @param bX Vecteur dans le repère B
  * @param aTb Matrice de transformation
- * @param aX Vecteur dans le repèreA
+ * @param aX Vecteur dans le repère A
  */
 void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb,  vpColVector &aX)
 {
-    vpColVector bXHomogene(aX.size+1), aXHomogene(aX.size+1);
+    vpColVector bXHomogene(aX.size()+1), aXHomogene(aX.size()+1);
     for (size_t i = 0; i < aXHomogene.size()-1; i++)
     {
         bXHomogene[i]=bX[i];
