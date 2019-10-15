@@ -1,7 +1,10 @@
 /**
  * @file av-v0.cpp
  * @author Thomas LEMETAYER (thomas.lemetayer.35@gmail.com)
+<<<<<<< HEAD
  * @author Corentin SALAUN (corentin.salaun@gmail.com)
+=======
+>>>>>>> 9ae6375825155603e2aedd23f65fff2d5820b718
  * @brief 
  * @version 0.1
  * @date 2019-10-15
@@ -54,11 +57,16 @@ void display(vpCameraParameters& cam, vpImage<unsigned char> &I, vpColVector &x,
     vpDisplay::flush(I) ;
 }
 
-
-// Projection d'un point 3D sur le plane image  X(3), x(2)
+/**
+ * @brief Projection d'un point 3D sur le plane image  X(3), x(2)
+ * 
+ * @param X 
+ * @param x 
+ */
 void project(vpColVector &X, vpColVector &x)
 {
-
+    x[0]=X[0]/X[2];
+    x[1]=X[1]/X[2];
 }
 
 /**
