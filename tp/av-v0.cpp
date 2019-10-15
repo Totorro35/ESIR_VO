@@ -1,7 +1,17 @@
+/**
+ * @file av-v0.cpp
+ * @author Thomas LEMETAYER (thomas.lemetayer.35@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2019-10-15
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
 #define VP_TRACE
 
-//! \example tutorial-viewer.cpp
-//! [Include display]
+
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
@@ -16,18 +26,19 @@
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
-
-
-//! [Include display]
-//! [Include io]
 #include <visp3/io/vpImageIo.h>
-//! [Include io]
 
 using namespace std ;
 
-
-void
-display(vpCameraParameters& cam, vpImage<unsigned char> &I, vpColVector &x, vpColVector &xd)
+/**
+ * @brief Display an the View
+ * 
+ * @param cam 
+ * @param I 
+ * @param x 
+ * @param xd 
+ */
+void display(vpCameraParameters& cam, vpImage<unsigned char> &I, vpColVector &x, vpColVector &xd)
 {
     for (int i = 0 ; i < x.getRows()/2 ; i++)
     {
@@ -51,7 +62,13 @@ project(vpColVector &X, vpColVector &x)
 
 }
 
-// Changement de repere bX(3), aX(3), aTb est une matrice homogène
+/**
+ * @brief Changement de repere bX(3), aX(3), aTb est une matrice homogène
+ * 
+ * @param bX Vecteur dans le repère B
+ * @param aTb Matrice de transformation
+ * @param aX Vecteur dans le repèreA
+ */
 void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb,  vpColVector &aX)
 {
 
