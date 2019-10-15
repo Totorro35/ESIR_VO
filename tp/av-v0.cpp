@@ -73,12 +73,14 @@ void project(vpColVector &X, vpColVector &x)
  */
 void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb, vpColVector &aX)
 {
-    vpColVector bXHomogene(aX.size()+1), aXHomogene(aX.size()+1);
-    for (size_t i = 0; i < aXHomogene.size()-1; i++)
+    aX.resize(bX.size());
+    vpColVector bXHomogene(bX.size()+1), aXHomogene(bX.size()+1);
+    for (size_t i = 0; i < bXHomogene.size()-1; i++)
     {
         bXHomogene[i]=bX[i];
     }
     bXHomogene[aXHomogene.size()-1]=1.0;
+    
     aXHomogene = aTb * bXHomogene;
 
     for (size_t i = 0; i < aXHomogene.size()-1; i++)
@@ -156,6 +158,7 @@ void tp2DVisualServoingOnePoint()
     wX[2] = -0.5;
 
     vpColVector e(2); //
+    e=1;
 
     // position courante, position desiree
     vpColVector x(2), xd(2);
@@ -187,7 +190,7 @@ void tp2DVisualServoingOnePoint()
 
         //calcul de la loi de commande v= ...
 
-        v = -lambda * Lx * e;
+        v = -lambda * Lx.pseudoInverse() * e;
 
         // Ne pas modifier la suite
         //mise a jour de la position de la camera
