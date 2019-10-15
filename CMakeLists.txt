@@ -9,3 +9,4 @@ project(TP_VO)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src bin)
 add_subdirectory(${PROJECT_SOURCE_DIR}/docs docs)
+add_subdirectory(${PROJECT_SOURCE_DIR}/tp tp)

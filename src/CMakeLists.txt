@@ -19,7 +19,7 @@ set( CMAKE_CXX_FLAGS_RELEASE "-O3" )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
 ## Find all source files to be compiled into object files
-file( GLOB_RECURSE SOURCES *.cc *.cpp )
+#file( GLOB_RECURSE SOURCES *.cc *.cpp )
 
 ## Source file containing the "main" function
 set( MAIN_SOURCES main.cpp )

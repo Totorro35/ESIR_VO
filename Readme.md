@@ -12,6 +12,8 @@ The workspace setup the Docker to run graphical software.
 ### Asservisement Visuel
 [François Chaumette](https://team.inria.fr/rainbow/fr/team/francois-chaumette/)
 
+Alexander Oliva - alexander.oliva@inria.fr
+
 ## TP
 [TP1](TP1.md)
 
