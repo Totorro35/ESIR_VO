@@ -71,9 +71,9 @@ void project(vpColVector &X, vpColVector &x)
  * 
  * @param bX Vecteur dans le repère B
  * @param aTb Matrice de transformation
- * @param aX Vecteur dans le repère A
+ * @param aX Output vecteur dans le repère A
  */
-void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb,  vpColVector &aX)
+void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb, vpColVector &aX)
 {
     vpColVector bXHomogene(aX.size()+1), aXHomogene(aX.size()+1);
     for (size_t i = 0; i < aXHomogene.size()-1; i++)
