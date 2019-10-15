@@ -60,7 +60,8 @@
 			"thread": "cpp",
 			"cfenv": "cpp",
 			"cinttypes": "cpp",
-			"typeinfo": "cpp"
+			"typeinfo": "cpp",
+			"list": "cpp"
 		},
 		"doxdocgen.c.getterText": "Get the {name}",
 		"doxdocgen.c.setterText": "Set the {name}",
