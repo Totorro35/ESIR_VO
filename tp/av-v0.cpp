@@ -1,3 +1,14 @@
+/**
+ * @file av-v0.cpp
+ * @author Thomas LEMETAYER (thomas.lemetayer.35@gmail.com)
+ * @author Corentin SALAUN (corentin.salaun@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2019-10-15
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #define VP_TRACE
 
 //! \example tutorial-viewer.cpp
@@ -26,8 +37,7 @@
 using namespace std ;
 
 
-void
-display(vpCameraParameters& cam, vpImage<unsigned char> &I, vpColVector &x, vpColVector &xd)
+void display(vpCameraParameters& cam, vpImage<unsigned char> &I, vpColVector &x, vpColVector &xd)
 {
     for (int i = 0 ; i < x.getRows()/2 ; i++)
     {
@@ -45,14 +55,20 @@ display(vpCameraParameters& cam, vpImage<unsigned char> &I, vpColVector &x, vpCo
 
 
 // Projection d'un point 3D sur le plane image  X(3), x(2)
-void
-project(vpColVector &X, vpColVector &x)
+void project(vpColVector &X, vpColVector &x)
 {
 
 }
 
 // Changement de repere bX(3), aX(3), aTb est une matrice homogène
-void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb,  vpColVector &aX)
+/**
+ * @brief 
+ * 
+ * @param bX vecteur exprime dans le repere a
+ * @param aTb Matrice de transformation du repere a au repere b
+ * @param aX Output vector X exprime dans le repere a
+ */
+void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb, vpColVector &aX)
 {
 
 }
@@ -60,8 +76,7 @@ void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb,  vpColVe
 
 
 // Calcul de la matrice d'interaction d'un point 2D
-void
-computeInteractionMatrix(vpColVector &cX, double x, double y, vpMatrix &Lx)
+void computeInteractionMatrix(vpColVector &cX, double x, double y, vpMatrix &Lx)
 {
 
 
@@ -70,8 +85,7 @@ computeInteractionMatrix(vpColVector &cX, double x, double y, vpMatrix &Lx)
 
 
 
-void
-tp2DVisualServoingOnePoint()
+void tp2DVisualServoingOnePoint()
 {
 
     //-------------------------------------------------------------
@@ -196,8 +210,7 @@ tp2DVisualServoingOnePoint()
     vpDisplay::getClick(I) ;
 }
 
-void
-tp2DVisualServoingFourPoint()
+void tp2DVisualServoingFourPoint()
 {
 
 
@@ -339,8 +352,7 @@ computeInteractionMatrix3D(...)
 }
 */
 
-void
-tp3DVisualServoing()
+void tp3DVisualServoing()
 {
 
 
@@ -424,8 +436,7 @@ tp3DVisualServoing()
 }
 
 
-void
-tp2DVisualServoingFourPointMvt()
+void tp2DVisualServoingFourPointMvt()
 {
 
 /*
