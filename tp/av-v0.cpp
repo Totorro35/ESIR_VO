@@ -60,6 +60,7 @@ void display(vpCameraParameters &cam, vpImage<unsigned char> &I, vpColVector &x,
  */
 void project(vpColVector &X, vpColVector &x)
 {
+    x.resize(2);
     x[0] = X[0] / X[2];
     x[1] = X[1] / X[2];
 }
@@ -74,18 +75,18 @@ void project(vpColVector &X, vpColVector &x)
 void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb, vpColVector &aX)
 {
     aX.resize(bX.size());
-    vpColVector bXHomogene(bX.size()+1), aXHomogene(bX.size()+1);
-    for (size_t i = 0; i < bXHomogene.size()-1; i++)
+    vpColVector bXHomogene(bX.size() + 1), aXHomogene(bX.size() + 1);
+    for (size_t i = 0; i < bXHomogene.size() - 1; i++)
     {
-        bXHomogene[i]=bX[i];
+        bXHomogene[i] = bX[i];
     }
-    bXHomogene[aXHomogene.size()-1]=1.0;
-    
+    bXHomogene[aXHomogene.size() - 1] = 1.0;
+
     aXHomogene = aTb * bXHomogene;
 
-    for (size_t i = 0; i < aXHomogene.size()-1; i++)
+    for (size_t i = 0; i < aXHomogene.size() - 1; i++)
     {
-        aX[i]=aXHomogene[i]/aXHomogene[aXHomogene.size()-1];
+        aX[i] = aXHomogene[i] / aXHomogene[aXHomogene.size() - 1];
     }
 }
 
@@ -100,20 +101,20 @@ void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb, vpColVec
 void computeInteractionMatrix(vpColVector &cX, double x, double y, vpMatrix &Lx)
 {
     double invZ = 1 / cX[2];
-    Lx.resize(2,6);
-    Lx[0][0]=-invZ;
-    Lx[0][1]=0;
-    Lx[0][2]=x*invZ;
-    Lx[0][3]=x*y;
-    Lx[0][4]=-(1+x*x);
-    Lx[0][5]=y;
+    Lx.resize(2, 6);
+    Lx[0][0] = -invZ;
+    Lx[0][1] = 0;
+    Lx[0][2] = x * invZ;
+    Lx[0][3] = x * y;
+    Lx[0][4] = -(1 + x * x);
+    Lx[0][5] = y;
 
-    Lx[1][0]=0;
-    Lx[1][1]=-invZ;
-    Lx[1][2]=y*invZ;
-    Lx[1][3]=1+y*y;
-    Lx[1][4]=-x*y;
-    Lx[1][5]=-x;
+    Lx[1][0] = 0;
+    Lx[1][1] = -invZ;
+    Lx[1][2] = y * invZ;
+    Lx[1][3] = 1 + y * y;
+    Lx[1][4] = -x * y;
+    Lx[1][5] = -x;
 }
 
 /**
@@ -170,7 +171,7 @@ void tp2DVisualServoingOnePoint()
     wX[2] = -0.5;
 
     vpColVector e(2); //
-    e=1;
+    e = 1;
 
     // position courante, position desiree
     vpColVector x(2), xd(2);
@@ -178,8 +179,8 @@ void tp2DVisualServoingOnePoint()
     vpMatrix Lx(2, 6);
 
     // position desirée  (au centre de l'image x=0, y=0)
-    xd[0]=0;
-    xd[1]=0;
+    xd[0] = 0;
+    xd[1] = 0;
 
     // vitesse de la camera
     vpColVector v(6);
@@ -191,14 +192,14 @@ void tp2DVisualServoingOnePoint()
         // instancier x
 
         vpColVector cX;
-        changeFrame(wX,cTw,cX);
-        project(cX,x);
+        changeFrame(wX, cTw, cX);
+        project(cX, x);
 
         //calcul de l'erreur
-        e = x-xd;
+        e = x - xd;
 
         // Calcul de la matrice d'interaction
-        computeInteractionMatrix(cX,x[0],x[1],Lx);
+        computeInteractionMatrix(cX, x[0], x[1], Lx);
 
         //calcul de la loi de commande v= ...
 
@@ -241,6 +242,11 @@ void tp2DVisualServoingOnePoint()
     vpDisplay::getClick(I);
 }
 
+/**
+ * @brief Executable for 3.3
+ *  Asservissement visuel sur 4 points 2D
+ * 
+ */
 void tp2DVisualServoingFourPoint()
 {
 
@@ -276,6 +282,7 @@ void tp2DVisualServoingFourPoint()
 
     //-------------------------------------------------------------
 
+
     //positions initiale (à tester)
     vpHomogeneousMatrix cTw(-0.2, -0.1, 1.3,
                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
@@ -306,28 +313,46 @@ void tp2DVisualServoingFourPoint()
     wX[3][1] = M;
     wX[3][2] = 0;
 
-    int size;
-    vpColVector e(size); //
+    vpColVector e(8); //
+    e = 1;
 
-    vpColVector x(size), xd(size);
+    vpColVector x(8), xd(8);
 
     //initialisation de la position désire des points dans l'image en fonction de cdTw
 
-    vpColVector v(size);
+    for (size_t i = 0; i < 4; i++)
+    {
+        vpColVector cdX;
+        changeFrame(wX[i], cdTw, cdX);
+        vpColVector _xd;
+        project(cdX, _xd);
+        xd[i * 2 + 0] = _xd[0];
+        xd[i * 2 + 1] = _xd[1];
+    }
+
+    vpColVector v(6);
     double lambda = 0.1;
     int iter = 0;
-
     while (fabs(e.sumSquare()) > 1e-16)
     {
-
         // calcul de la position des points dans l'image en fonction de cTw
+        for (size_t i = 0; i < 4; i++)
+        {
+            vpColVector cX;
+            changeFrame(wX[i], cTw, cX);
+            vpColVector _x;
+            project(cX, _x);
+            x[i * 2 + 0] = _x[0];
+            x[i * 2 + 1] = _x[1];
+        }
 
         // Calcul de la matrice d'interaction
-        vpMatrix Lx(size, size);
+        vpMatrix Lx(8, 6);
 
         //calcul de l'erreur
-
+        e = x - xd;
         //calcul de la loi de commande
+        v = -lambda * Lx.pseudoInverse() * e;
 
         //mise a jour de la position de la camera
         cTw = vpExponentialMap::direct(v).inverse() * cTw;
@@ -468,8 +493,8 @@ void tp2DVisualServoingFourPointMvt()
 int main(int argc, char **argv)
 {
 
-    tp2DVisualServoingOnePoint() ;
-    // tp2DVisualServoingFourPoint() ;
+    //tp2DVisualServoingOnePoint() ;
+    tp2DVisualServoingFourPoint();
     //tp3DVisualServoing() ;
     //tp2DVisualServoingFourPointMvt();
 }
