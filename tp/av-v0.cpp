@@ -1,6 +1,10 @@
 /**
  * @file av-v0.cpp
  * @author Thomas LEMETAYER (thomas.lemetayer.35@gmail.com)
+<<<<<<< HEAD
+=======
+ * @author Corentin SALAUN (corentin.salaun@gmail.com)
+>>>>>>> 12595049eac82f5d6ee0394d4d05a0225cd9b5eb
  * @brief 
  * @version 0.1
  * @date 2019-10-15
@@ -8,7 +12,10 @@
  * @copyright Copyright (c) 2019
  * 
  */
+<<<<<<< HEAD
 
+=======
+>>>>>>> 12595049eac82f5d6ee0394d4d05a0225cd9b5eb
 #define VP_TRACE
 
 
@@ -56,8 +63,7 @@ void display(vpCameraParameters& cam, vpImage<unsigned char> &I, vpColVector &x,
 
 
 // Projection d'un point 3D sur le plane image  X(3), x(2)
-void
-project(vpColVector &X, vpColVector &x)
+void project(vpColVector &X, vpColVector &x)
 {
 
 }
@@ -77,8 +83,7 @@ void changeFrame(const vpColVector &bX, const vpHomogeneousMatrix &aTb,  vpColVe
 
 
 // Calcul de la matrice d'interaction d'un point 2D
-void
-computeInteractionMatrix(vpColVector &cX, double x, double y, vpMatrix &Lx)
+void computeInteractionMatrix(vpColVector &cX, double x, double y, vpMatrix &Lx)
 {
 
 
@@ -87,8 +92,7 @@ computeInteractionMatrix(vpColVector &cX, double x, double y, vpMatrix &Lx)
 
 
 
-void
-tp2DVisualServoingOnePoint()
+void tp2DVisualServoingOnePoint()
 {
 
     //-------------------------------------------------------------
@@ -213,8 +217,7 @@ tp2DVisualServoingOnePoint()
     vpDisplay::getClick(I) ;
 }
 
-void
-tp2DVisualServoingFourPoint()
+void tp2DVisualServoingFourPoint()
 {
 
 
@@ -356,8 +359,7 @@ computeInteractionMatrix3D(...)
 }
 */
 
-void
-tp3DVisualServoing()
+void tp3DVisualServoing()
 {
 
 
@@ -441,8 +443,7 @@ tp3DVisualServoing()
 }
 
 
-void
-tp2DVisualServoingFourPointMvt()
+void tp2DVisualServoingFourPointMvt()
 {
 
 /*
