@@ -7,4 +7,11 @@ Template include Documentation doxygen and C++ project with CMake
 
 The workspace setup the Docker to run graphical software.
 
-## TP1
+## Cours
+
+### Asservisement Visuel
+[François Chaumette](https://team.inria.fr/rainbow/fr/team/francois-chaumette/)
+
+## TP
+[TP1](TP1.md)
+

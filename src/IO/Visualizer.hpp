@@ -14,8 +14,19 @@
 #include <visp/vpImageIo.h>
 #include <visp3/gui/vpDisplayX.h>
 
+/**
+ * @brief Namespace IO
+ * 
+ */
 namespace IO
 {
+
+/**
+ * @brief Function to show an Image
+ * 
+ * @param title 
+ * @param I the Image in RGB
+ */
 void show(const std::string &title, vpImage<vpRGBa> &I)
 {
     vpDisplayX d(I, vpDisplay::SCALE_AUTO);
@@ -25,6 +36,10 @@ void show(const std::string &title, vpImage<vpRGBa> &I)
     vpDisplay::getClick(I);
 }
 
+/**
+ * @brief Main Function to test show()
+ * 
+ */
 void MainVisu()
 {
     vpImage<vpRGBa> I;

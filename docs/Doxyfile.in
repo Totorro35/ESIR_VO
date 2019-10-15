@@ -6,6 +6,11 @@ INPUT                  = @doxy_main_page@ \
                          @PROJECT_SOURCE_DIR@ \
                          @PROJECT_BINARY_DIR@
 FILE_PATTERNS          = *.hpp \
-                         *.cpp
+                         *.cpp \
+                         *.md
 RECURSIVE              = YES
 USE_MDFILE_AS_MAINPAGE = @doxy_main_page@
+HTML_COLORSTYLE_HUE = 282
+HTML_COLORSTYLE_SAT = 180
+HTML_COLORSTYLE_GAMMA = 130
+HTML_HEADER      = @doxygen_header@
