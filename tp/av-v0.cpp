@@ -282,14 +282,13 @@ void tp2DVisualServoingFourPoint()
 
     //-------------------------------------------------------------
 
-
     //positions initiale (à tester)
-    vpHomogeneousMatrix cTw(-0.2, -0.1, 1.3,
-                            vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
-    //  vpHomogeneousMatrix cTw (0.2,0.1,1.3,  0,0,vpMath::rad(5)) ;
-    //   vpHomogeneousMatrix cTw (0,0,1,  0,0,vpMath::rad(45)) ;
-    //  vpHomogeneousMatrix cTw (0, 0, 1,  0, 0, vpMath::rad(90)) ;
-    //   vpHomogeneousMatrix cTw (0, 0, 1,  0, 0, vpMath::rad(180)) ;
+    vpHomogeneousMatrix cTw(0, 0, 1.3, 0, 0, 0);
+    //vpHomogeneousMatrix cTw(-0.2, -0.1, 1.3,vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
+    //vpHomogeneousMatrix cTw(0.2, 0.1, 1.3, 0, 0, vpMath::rad(5));
+    //vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(45));
+    //vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(90));
+    //vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(180));
 
     // position finale
     vpHomogeneousMatrix cdTw(0, 0, 1, 0, 0, 0);
@@ -335,19 +334,31 @@ void tp2DVisualServoingFourPoint()
     int iter = 0;
     while (fabs(e.sumSquare()) > 1e-16)
     {
+        std::cout << "----------------------------" << std::endl;
+        std::cout << "Itération : " << iter << std::endl;
+        vpMatrix Lx(8, 6);
+
         // calcul de la position des points dans l'image en fonction de cTw
         for (size_t i = 0; i < 4; i++)
         {
-            vpColVector cX;
-            changeFrame(wX[i], cTw, cX);
+            vpColVector _cX;
+            changeFrame(wX[i], cTw, _cX);
+
             vpColVector _x;
-            project(cX, _x);
+            project(_cX, _x);
+
             x[i * 2 + 0] = _x[0];
             x[i * 2 + 1] = _x[1];
-        }
 
-        // Calcul de la matrice d'interaction
-        vpMatrix Lx(8, 6);
+            vpMatrix _Lx;
+            computeInteractionMatrix(_cX, _x[0], _x[1], _Lx);
+
+            for (size_t j = 0; j < 6; j++)
+            {
+                Lx[i * 2 + 0][j] = _Lx[0][j];
+                Lx[i * 2 + 1][j] = _Lx[1][j];
+            }
+        }
 
         //calcul de l'erreur
         e = x - xd;
