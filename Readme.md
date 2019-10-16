@@ -15,5 +15,6 @@ The workspace setup the Docker to run graphical software.
 Alexander Oliva - alexander.oliva@inria.fr
 
 ## TP
-[Introduction](Intro.md)  
-[TP1](TP1.md)
+[Introduction Visual Servoing](Intro.md)  
+
+[Asservissement visuel points 2D](TP1.md)  
