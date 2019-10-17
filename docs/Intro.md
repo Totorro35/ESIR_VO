@@ -23,4 +23,6 @@ Dans le cadre de ce TP, il faut donc créer une fonction qui prend un vecteur à
 
 Un deuxième point important en vision par ordinateur est d'être capable de passer du monde 3D à 2D. On appelle cela la projection. La projection basique et la plus simple que nous allons utilisé est la projection perspective.
 
+<img src="pinhole1.png" alt="drawing" width="30%"/>
+
 De manière calculatoire, on peut définir la projection avec les équations suivantes.

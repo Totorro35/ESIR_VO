@@ -7,8 +7,10 @@ INPUT                  = @doxy_main_page@ \
                          @PROJECT_BINARY_DIR@
 FILE_PATTERNS          = *.hpp \
                          *.cpp \
-                         *.md
+                         *.md \
+                         *.png
 RECURSIVE              = YES
+IMAGE_PATH     = @DOXYGEN_DATA@
 USE_MDFILE_AS_MAINPAGE = @doxy_main_page@
 HTML_COLORSTYLE_HUE = 282
 HTML_COLORSTYLE_SAT = 180

@@ -4,6 +4,7 @@ if (DOXYGEN_FOUND)
     set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
     set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
     set(doxy_main_page ${PROJECT_SOURCE_DIR}/Readme.md)
+    set(DOXYGEN_DATA ${CMAKE_CURRENT_SOURCE_DIR}/data/)
     # set(doxygen_header ${CMAKE_CURRENT_SOURCE_DIR}/header.html)
 
     # request to configure the file
