@@ -8,7 +8,8 @@ INPUT                  = @doxy_main_page@ \
 FILE_PATTERNS          = *.hpp \
                          *.cpp \
                          *.md \
-                         *.png
+                         *.png \
+                         *.pdf
 RECURSIVE              = YES
 IMAGE_PATH     = @DOXYGEN_DATA@
 USE_MDFILE_AS_MAINPAGE = @doxy_main_page@

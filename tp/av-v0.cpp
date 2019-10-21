@@ -283,12 +283,12 @@ void tp2DVisualServoingFourPoint()
     //-------------------------------------------------------------
 
     //positions initiale (à tester)
-    vpHomogeneousMatrix cTw(0, 0, 1.3, 0, 0, 0);
+    //vpHomogeneousMatrix cTw(0, 0, 1.3, 0, 0, 0);
     //vpHomogeneousMatrix cTw(-0.2, -0.1, 1.3,vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
     //vpHomogeneousMatrix cTw(0.2, 0.1, 1.3, 0, 0, vpMath::rad(5));
     //vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(45));
     //vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(90));
-    //vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(180));
+    vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(180));
 
     // position finale
     vpHomogeneousMatrix cdTw(0, 0, 1, 0, 0, 0);
@@ -350,8 +350,14 @@ void tp2DVisualServoingFourPoint()
             x[i * 2 + 0] = _x[0];
             x[i * 2 + 1] = _x[1];
 
+            vpColVector _cdX;
+            changeFrame(wX[i], cdTw, _cdX);
+            vpColVector _xd;
+            project(_cdX, _xd);
+
             vpMatrix _Lx;
-            computeInteractionMatrix(_cX, _x[0], _x[1], _Lx);
+            //computeInteractionMatrix(_cX, _x[0], _x[1], _Lx);
+            computeInteractionMatrix(_cdX, _xd[0], _xd[1], _Lx);
 
             for (size_t j = 0; j < 6; j++)
             {
@@ -397,21 +403,83 @@ void tp2DVisualServoingFourPoint()
     vpDisplay::getClick(I);
 }
 
-/*
-void
-computeError3D(...)
+
+void computeError3D(const vpHomogeneousMatrix& cdTc, vpColVector& e)
 {
+    e.resize(6);
 
+    vpTranslationVector translation;
+    cdTc.extract(translation);
 
+    vpThetaUVector thetau;
+    cdTc.extract(thetau);
+
+    e[0]=translation[0];
+    e[1]=translation[1];
+    e[2]=translation[2];
+    e[3]=thetau[0];
+    e[4]=thetau[1];
+    e[5]=thetau[2];
 }
 
-void
-computeInteractionMatrix3D(...)
-{
+void preProduit(const vpColVector&u , vpMatrix& kU){
+    kU.resize(3,3);
+    kU=0;
+    kU[0][1]=-u[2];
+    kU[0][2]=u[1];
 
+    kU[1][0]=u[2];
+    kU[1][2]=-u[0];
 
+    kU[2][0]=-u[1];
+    kU[2][1]=u[0];
 }
-*/
+
+double sinc(double theta){
+    return sin(theta)/theta;
+}
+
+
+void computeInteractionMatrix3D(const vpHomogeneousMatrix& cdTc,vpMatrix &Lx)
+{
+    Lx=0;
+    vpRotationMatrix rotation;
+    cdTc.extract(rotation);
+
+    for (size_t i = 0; i < 3; i++)
+    {
+        for (size_t j = 0; j < 3; j++)
+        {
+            Lx[i][j] = rotation[i][j];
+        }
+    }
+
+
+    vpMatrix Lomega(3,3);
+    Lomega.setIdentity();
+
+    vpThetaUVector thetau;
+    cdTc.extract(thetau);
+
+    double theta;
+    vpColVector u;
+    thetau.extract(theta,u);
+
+    vpMatrix Tu;
+    preProduit(u,Tu);
+
+    Lomega=Lomega+(theta/2.)*Tu+(1- sinc(theta)/(sinc(theta/2)*sinc(theta/2)))*Tu*Tu;
+
+    for (size_t i = 3; i < 6; i++)
+    {
+        for (size_t j = 3; j < 6; j++)
+        {
+            
+            Lx[i][j] = Lomega[i-3][j-3];
+        }
+    }
+}
+
 
 void tp3DVisualServoing()
 {
@@ -442,24 +510,26 @@ void tp3DVisualServoing()
                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
     vpHomogeneousMatrix cdTw(0, 0, 1, 0, 0, 0);
 
-    int size;
-    vpColVector e(size); //
+    vpColVector e(6);
+    e=1;
 
-    vpMatrix Lx(size, size);
+    vpMatrix Lx(6, 6);
 
-    vpColVector v(size);
+    vpColVector v(6);
     double lambda = 0.1;
     int iter = 0;
     while (fabs(e.sumSquare()) > 1e-6)
     {
+        vpHomogeneousMatrix cdTc = cdTw*cTw.inverse();
 
         // Calcul de l'erreur
-        //computeError3D(...) ;
+        computeError3D(cdTc,e) ;
 
         // Calcul de la matrice d'interaction
-        //  computeInteractionMatrix3D(...) ;
+        computeInteractionMatrix3D(cdTc,Lx) ;
 
         //        Calcul de la loi de commande
+        v = -lambda * Lx.pseudoInverse() * e;
 
         // Mis à jour de la position de la camera
         cTw = vpExponentialMap::direct(v).inverse() * cTw;
@@ -505,7 +575,7 @@ int main(int argc, char **argv)
 {
 
     //tp2DVisualServoingOnePoint() ;
-    tp2DVisualServoingFourPoint();
-    //tp3DVisualServoing() ;
+    //tp2DVisualServoingFourPoint();
+    tp3DVisualServoing() ;
     //tp2DVisualServoingFourPointMvt();
 }
