@@ -438,6 +438,8 @@ void preProduit(const vpColVector&u , vpMatrix& kU){
 }
 
 double sinc(double theta){
+    if(theta==0)
+        return 1;
     return sin(theta)/theta;
 }
 
@@ -471,6 +473,8 @@ void computeInteractionMatrix3D(const vpHomogeneousMatrix& cdTc,vpMatrix &Lx)
     preProduit(u,Tu);
 
     Lomega=Lomega+(theta/2.)*Tu+(1- sinc(theta)/(sinc(theta/2)*sinc(theta/2)))*Tu*Tu;
+
+    std::cout << Lomega << std::endl;
 
     for (size_t i = 3; i < 6; i++)
     {
@@ -508,8 +512,11 @@ void tp3DVisualServoing()
     plot.initGraph(3, 6);
 
     //Definition de la scene
-    vpHomogeneousMatrix cTw(-0.2, -0.1, 1.3,
-                            vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
+    vpHomogeneousMatrix cTw(0, 0, 1.3, 0, 0, 0);
+    //vpHomogeneousMatrix cTw(-0.2, -0.1, 1.3,vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
+    //vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(90));
+    //vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(180));
+
     vpHomogeneousMatrix cdTw(0, 0, 1, 0, 0, 0);
 
     vpColVector e(6);
@@ -706,9 +713,9 @@ void tp2DVisualServoingFourPointMvt()
         e = x - xd;
         //calcul de la loi de commande
         v = -lambda * Lx.pseudoInverse() * e;
-        v[0]+=v_obj[0];
-        v[1]+=v_obj[1];
-        v[2]+=v_obj[2];
+        //v[0]+=v_obj[0];
+        //v[1]+=v_obj[1];
+        //v[2]+=v_obj[2];
 
         //mise a jour de la position de la camera
         cTw = vpExponentialMap::direct(v).inverse() * cTw;
@@ -744,9 +751,32 @@ void tp2DVisualServoingFourPointMvt()
 
 int main(int argc, char **argv)
 {
+    std::cout << "----------------------------" << std::endl;
+    std::cout << "\n    TP Asservissement Visuel\n" << std::endl;
+    std::cout << "----------------------------" << std::endl;
+    std::cout << "1. Asservissement 2D" << std::endl;
+    std::cout << "2. Asservissement 2D à 4 points" << std::endl;
+    std::cout << "3. Asservissement 3D" << std::endl;
+    std::cout << "4. Poursuite de points" << std::endl;
 
-    //tp2DVisualServoingOnePoint() ;
-    //tp2DVisualServoingFourPoint();
-    //tp3DVisualServoing() ;
-    tp2DVisualServoingFourPointMvt();
+    std::cout << "Entrer un numéro :" << std::endl;
+    int choice;
+    std::cin >> choice;
+    switch (choice)
+    {
+        case 1:
+            tp2DVisualServoingOnePoint() ;
+            break;
+        case 2:
+            tp2DVisualServoingFourPoint();
+            break;
+        case 3:
+            tp3DVisualServoing() ;
+            break;
+        case 4:
+            tp2DVisualServoingFourPointMvt();
+            break;
+        default:
+            break;
+    }
 }

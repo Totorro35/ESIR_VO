@@ -18,4 +18,4 @@ foreach(cpp ${cpp_})
   visp_add_target(${cpp})
 endforeach()
 
-target_link_libraries( main OpenMP::OpenMP_CXX)
+#target_link_libraries( main OpenMP::OpenMP_CXX)
