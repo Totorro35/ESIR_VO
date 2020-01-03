@@ -11,6 +11,8 @@
  */
 #define VP_TRACE
 
+#define CUDAVITE
+
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
@@ -356,8 +358,8 @@ void tp2DVisualServoingFourPoint()
             project(_cdX, _xd);
 
             vpMatrix _Lx;
-            //computeInteractionMatrix(_cX, _x[0], _x[1], _Lx);
-            computeInteractionMatrix(_cdX, _xd[0], _xd[1], _Lx);
+            computeInteractionMatrix(_cX, _x[0], _x[1], _Lx);
+            //computeInteractionMatrix(_cdX, _xd[0], _xd[1], _Lx);
 
             for (size_t j = 0; j < 6; j++)
             {
@@ -559,16 +561,185 @@ void tp3DVisualServoing()
 void tp2DVisualServoingFourPointMvt()
 {
 
-    /*
-    reprendre votre code pour 4 points
-    au debut de la boucle d'av vous considerer que les points sont en mouvement (o
-            while (fabs(e.sumSquare()) > 1e-16)
-            {
-                // les points sont animés d'un mouvement de 1cm/s en x dans Rw
-                for (int i = 0 ; i < 4 ; i++) wX[i][0] += 0.01 ;
-            }
+    //-------------------------------------------------------------
+    // Mise en oeuvre des courbes
 
-*/
+    vpPlot plot(4, 700, 700, 100, 200, "Curves...");
+
+    char title[40];
+    strncpy(title, "||e||", 40);
+    plot.setTitle(0, title);
+    plot.initGraph(0, 1);
+
+    strncpy(title, "x-xd", 40);
+    plot.setTitle(1, title);
+    plot.initGraph(1, 8);
+
+    strncpy(title, "camera velocity", 40);
+    plot.setTitle(2, title);
+    plot.initGraph(2, 6);
+
+    strncpy(title, "camera position", 40);
+    plot.setTitle(3, title);
+    plot.initGraph(3, 6);
+
+    //-------------------------------------------------------------
+    // Affichage des images
+    vpImage<unsigned char> I(400, 600);
+    vpDisplayX d;
+    d.init(I);
+    vpDisplay::display(I);
+    vpCameraParameters cam(400, 400, 300, 200);
+
+    //-------------------------------------------------------------
+
+    // Origine de la caméra
+
+    vpHomogeneousMatrix cTw(0, 0, 1.3, 0, 0, 0);
+    //vpHomogeneousMatrix cTw(-0.2, -0.1, 1.3,vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
+    //vpHomogeneousMatrix cTw(0.2, 0.1, 1.3, 0, 0, vpMath::rad(5));
+    //vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(45));
+    //vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(90));
+    //vpHomogeneousMatrix cTw(0, 0, 1, 0, 0, vpMath::rad(180));
+
+    //-------------------------------------------------------------
+
+    int nb_point=4;
+    // Point cible dans le monde 3D
+
+    double M = 0.40;
+
+    std::srand(std::time(nullptr));
+
+    vpColVector wX[nb_point];
+    for (int i = 0; i < nb_point; i++){
+        wX[i].resize(3);
+        wX[i][0] = ((double)rand() / RAND_MAX)*2*M-M;
+        wX[i][1] = ((double)rand() / RAND_MAX)*2*M-M;
+        wX[i][2] = ((double)rand() / RAND_MAX)*2*M-M;
+    }
+    
+
+    wX[0][0] = -M;
+    wX[0][1] = -M;
+    wX[0][2] = 0;
+    wX[1][0] = M;
+    wX[1][1] = -M;
+    wX[1][2] = 0;
+    wX[2][0] = M;
+    wX[2][1] = M;
+    wX[2][2] = 0;
+    wX[3][0] = -M;
+    wX[3][1] = M;
+    wX[3][2] = 0;
+
+
+    //-------------------------------------------------------------
+
+    // Point à viser dans l'écran
+
+    // position finale
+    vpColVector xd(2*nb_point);
+    vpHomogeneousMatrix cdTw(0, 0, 1, 0, 0, 0);
+
+    //initialisation de la position désire des points dans l'image en fonction de cdTw
+    for (size_t i = 0; i < nb_point; i++)
+    {
+        vpColVector cdX;
+        changeFrame(wX[i], cdTw, cdX);
+        vpColVector _xd;
+        project(cdX, _xd);
+        xd[i * 2 + 0] = _xd[0];
+        xd[i * 2 + 1] = _xd[1];
+    }
+    
+    //-------------------------------------------------------------
+
+    vpColVector e(2*nb_point);
+    e = 1;
+
+    vpColVector x(2*nb_point);
+
+    vpColVector v(6);
+    double lambda = 0.1;
+    int iter = 0;
+
+    vpColVector v_obj(3);
+    v_obj[0]=0;
+    v_obj[1]=0;
+    v_obj[2]=0.4;
+
+    while (fabs(e.sumSquare()) > 1e-16)
+    {
+        std::cout << "----------------------------" << std::endl;
+        std::cout << "Itération : " << iter << std::endl;
+
+        for (int i = 0; i < nb_point; i++)
+            wX[i]+=v_obj;
+
+        std::cout << "  Déplacement de la cible"<< std::endl;
+        vpMatrix Lx(2*nb_point, 6);
+
+        // calcul de la position des points dans l'image en fonction de cTw
+        for (size_t i = 0; i < nb_point; i++)
+        {
+            vpColVector _cX;
+            changeFrame(wX[i], cTw, _cX);
+
+            vpColVector _x;
+            project(_cX, _x);
+
+            x[i * 2 + 0] = _x[0];
+            x[i * 2 + 1] = _x[1];
+
+            vpMatrix _Lx;
+            computeInteractionMatrix(_cX, _x[0], _x[1], _Lx);
+
+            for (size_t j = 0; j < 6; j++)
+            {
+                Lx[i * 2 + 0][j] = _Lx[0][j];
+                Lx[i * 2 + 1][j] = _Lx[1][j];
+            }
+        }
+
+        //calcul de l'erreur
+        e = x - xd;
+        //calcul de la loi de commande
+        v = -lambda * Lx.pseudoInverse() * e;
+        v[0]+=v_obj[0];
+        v[1]+=v_obj[1];
+        v[2]+=v_obj[2];
+
+        //mise a jour de la position de la camera
+        cTw = vpExponentialMap::direct(v).inverse() * cTw;
+
+        //cout << "  iter " << iter << " : " << e.t() << endl;
+        iter++;
+
+        //mise a jour des courbes
+        vpPoseVector ctw(cTw);
+        plot.plot(0, 0, iter, e.sumSquare());
+        plot.plot(1, iter, e);
+        plot.plot(2, iter, v);
+        plot.plot(3, iter, ctw);
+        //mise a jour de l'image
+        display(cam, I, x, xd);
+    }
+
+    // sauvegarde des courbes
+    plot.saveData(0, "e.txt", "#");
+    plot.saveData(1, "error.txt", "#");
+    plot.saveData(2, "v.txt", "#");
+    plot.saveData(3, "p.txt", "#");
+
+    // sauvegarde de l'image finale
+    {
+        vpImage<vpRGBa> Irgb;
+        vpDisplay::getImage(I, Irgb);
+        vpImageIo::write(Irgb, "4pt.jpg");
+    }
+    cout << "Clicker sur l'image pour terminer" << endl;
+    vpDisplay::getClick(I);
 }
 
 int main(int argc, char **argv)
@@ -576,6 +747,6 @@ int main(int argc, char **argv)
 
     //tp2DVisualServoingOnePoint() ;
     //tp2DVisualServoingFourPoint();
-    tp3DVisualServoing() ;
-    //tp2DVisualServoingFourPointMvt();
+    //tp3DVisualServoing() ;
+    tp2DVisualServoingFourPointMvt();
 }
