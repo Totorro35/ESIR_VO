@@ -245,6 +245,10 @@ void buildBDFaces(const std::vector<std::string>& paths, int maxEigenFace)
     }
 
     std::cout << "[INFO] Compute Error Matrix for K=20 " << std::endl;
+    std::cout << "Display result ? (Y/N)"<<std::endl;
+    std::cin >> display;
+
+    if(display=="Y"){
     int K_value=20;
 
     vpMatrix ErrorMatrix(m_maxEigenFace,m_maxEigenFace);
@@ -309,8 +313,53 @@ void buildBDFaces(const std::vector<std::string>& paths, int maxEigenFace)
 
     double theta = (max_same+min_diff)/2;
     std::cout << "Theta : "<<theta<<std::endl;
+    }
 
     std::cout << "[INFO] Reconnaissance facial en fonction de K " << std::endl;
+    std::cout << "Display result ? (Y/N)"<<std::endl;
+    std::cin >> display;
+
+    if(display=="Y"){
+    double theta_seuil = 8.5;
+    std::cout<<"Theta : "<<theta_seuil<<std::endl;
+
+    for (size_t K_value = 0; K_value < m_maxEigenFace; K_value++)
+    {
+        std::cout << "  K : "<<K_value<< std::endl;
+        int nbReconnu=0;
+
+#pragma omp parallel for
+        for (size_t i = 0; i < 40; i++)
+        {
+            vpColVector face_i = dataBase_Test.getCol(i);
+
+            vpColVector W_i(K_value);
+            for (size_t k = 0; k < K_value; k++)
+            {
+                W_i[k]=eigenVector.getCol(k)*(face_i-m_vMean);
+            }
+
+            for (size_t j = 0; j < m_maxEigenFace; j++)
+            {
+                vpColVector face_j = dataBase.getCol(j);
+
+                vpColVector W_j(K_value);
+                for (size_t k = 0; k < K_value; k++)
+                {
+                    W_j[k]=eigenVector.getCol(k)*(face_j-m_vMean);
+                }
+        
+                double error = (W_i - W_j).infinityNorm();
+                if(error<theta_seuil){
+#pragma omp critical
+                    nbReconnu++;
+                    break;
+                }
+            }
+        }
+        std::cout << "    Nb Reconnu : "<<nbReconnu<< std::endl;
+    }
+    }
 
     std::cout << "[INFO] Fin du programme" << std::endl;
 }
